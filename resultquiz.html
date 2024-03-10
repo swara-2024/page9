@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+              body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(219, 215, 215);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .times_played {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        table {
+            width: 90%; /* Adjusted width */
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px; /* Increased padding */
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .average_accuracy, .average_score {
+            padding: 20px; /* Increased padding */
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .restart_btn, .continue_btn {
+            cursor: pointer;
+            padding: 15px 30px;
+            border-radius: 25px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .restart_btn:hover, .continue_btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <h1>Quiz Results</h1>
+
+    <div class="times_played" id="timesPlayed"></div>
+
+    <div id="scoreTablesContainer"></div>
+
+    <div class="average_accuracy" id="averageAccuracy"></div>
+
+    <div class="average_score" id="averageScoreBox"></div>
+
+    <div class="restart_btn" id="restartBtn">Restart Game</div>
+    <div class="continue_btn" id="continueBtn">Continue Game</div>
+
+    <script>
+        const scoreHistory = JSON.parse(localStorage.getItem('scoreHistory')) || [];
+        const scoreTablesContainer = document.getElementById('scoreTablesContainer');
+        const timesPlayedElement = document.getElementById('timesPlayed');
+        timesPlayedElement.textContent = `Number of times played: ${scoreHistory.length}`;
+        scoreHistory.forEach((session, index) => {
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            const headersRow = document.createElement('tr');
+            headersRow.innerHTML = `
+                <th>Score</th>
+                <th>Accuracy (%)</th>
+                <th>Timestamp</th>
+            `;
+            thead.appendChild(headersRow);
+            table.appendChild(thead);
+
+            const sessionRow = document.createElement('tr');
+            sessionRow.innerHTML = `
+                <td>${session.score}</td>
+                <td>${session.accuracy || 'N/A'}</td>
+                <td>${session.timestamp}</td>
+            `;
+            tbody.appendChild(sessionRow);
+            table.appendChild(tbody);
+
+            scoreTablesContainer.appendChild(table);
+        });
+
+        const totalAccuracy = scoreHistory.reduce((acc, curr) => acc + (curr.accuracy ? parseFloat(curr.accuracy) : 0), 0);
+        const averageAccuracy = totalAccuracy / scoreHistory.length;
+        const averageAccuracyElement = document.getElementById('averageAccuracy');
+        averageAccuracyElement.textContent = `Average Accuracy: ${averageAccuracy.toFixed(2)}%`;
+
+        const totalScores = scoreHistory.reduce((acc, curr) => acc + curr.score, 0);
+        const averageScore = totalScores / scoreHistory.length;
+        const averageScoreBox = document.getElementById('averageScoreBox');
+        averageScoreBox.textContent = `Average Score: ${averageScore.toFixed(2)}`;
+
+        let rating;
+        if (averageScore >= 70) {
+            rating = "Good";
+        } else if (averageScore >= 40) {
+            rating = "Average";
+        } else {
+            rating = "Poor";
+        }
+        averageScoreBox.textContent += ` - Rating: ${rating}`;
+
+        averageScoreBox.addEventListener('click', () => {
+            alert("This is a message about the average score and rating.");
+        });
+
+        const restartBtn = document.getElementById('restartBtn');
+        restartBtn.addEventListener('click', () => {
+            localStorage.removeItem('scoreHistory');
+            window.location.href = 'index1.html';
+        });
+
+        const continueBtn = document.getElementById('continueBtn');
+        continueBtn.addEventListener('click', () => {
+            window.location.href = 'index1.html';
+        });
+    </script>
+</body>
+</html>
